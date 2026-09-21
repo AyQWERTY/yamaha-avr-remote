@@ -1,0 +1,48 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="128"
+    height="128"
+    viewBox="0 0 128 128"
+>
+    <!-- Receiver body -->
+    <rect
+        x="18"
+        y="38"
+        width="92"
+        height="52"
+        rx="7"
+        fill="#303236"
+        stroke="#70747a"
+        stroke-width="3"
+    />
+
+    <!-- Display -->
+    <rect x="27" y="48" width="43" height="13" rx="2" fill="#151618" />
+    <path
+        d="M32 54h25"
+        stroke="#bfc3c8"
+        stroke-width="2"
+        stroke-linecap="round"
+    />
+
+    <!-- Controls -->
+    <circle cx="34" cy="75" r="4" fill="#858a91" />
+    <circle cx="48" cy="75" r="4" fill="#858a91" />
+
+    <!-- Volume knob -->
+    <circle
+        cx="89"
+        cy="64"
+        r="17"
+        fill="#191a1c"
+        stroke="#9da2a8"
+        stroke-width="3"
+    />
+    <circle cx="89" cy="64" r="11" fill="#34373b" />
+    <path
+        d="M89 56v-5"
+        stroke="#e2e5e8"
+        stroke-width="3"
+        stroke-linecap="round"
+    />
+</svg>

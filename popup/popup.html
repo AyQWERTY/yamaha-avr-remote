@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Yamaha AVR Remote</title>
+        <link rel="stylesheet" href="popup.css" />
+    </head>
+    <body>
+        <header class="header">
+            <h1 id="receiverName">Yamaha AVR Remote</h1>
+            <button
+                id="powerToggleHeader"
+                class="btn-power-header"
+                title="Toggle power"
+                type="button"
+            >
+                ⏻
+            </button>
+        </header>
+
+        <main class="main">
+            <section id="page-controls" class="page">
+                <!-- Group 1 — Basic Control -->
+                <section class="control-section group-basic">
+                    <h2>Basic Control</h2>
+
+                    <!-- Volume -->
+                    <div class="volume-section">
+                        <div class="volume-left">
+                            <button
+                                id="muteToggle"
+                                class="btn-mute"
+                                title="Mute"
+                            >
+                                <span class="mute-icon">🔊</span>
+                            </button>
+                            <span id="volumeDisplay" class="volume-display"
+                                >— dB</span
+                            >
+                        </div>
+                        <div class="volume-slider-wrapper">
+                            <div class="slider-track-container">
+                                <div class="slider-track-clip">
+                                    <div
+                                        class="slider-track-fill"
+                                        id="sliderFill"
+                                    ></div>
+                                </div>
+                                <input
+                                    id="volumeSlider"
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    value="0"
+                                    class="volume-slider"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Selector -->
+                    <div class="input-row">
+                        <select id="inputSelect" class="input-select"></select>
+                    </div>
+                </section>
+
+                <!-- Group 2 — Sound Programs -->
+                <section class="control-section group-sound">
+                    <h2>Sound Program</h2>
+                    <!-- Straight toggle + Sound Program select on one row -->
+                    <div class="sound-row">
+                        <div class="toggle-container">
+                            <span class="toggle-label">Straight</span>
+                            <button
+                                id="straightToggle"
+                                class="toggle-btn"
+                                title="Toggle Straight mode"
+                            ></button>
+                        </div>
+                        <select
+                            id="soundProgramSelect"
+                            class="input-select"
+                        ></select>
+                    </div>
+                </section>
+
+                <!-- Group 3 — Tones &amp; Effects -->
+                <section class="control-section group-tone">
+                    <h2>Tones &amp; Effects</h2>
+
+                    <div class="toggle-row">
+                        <div class="toggle-container">
+                            <span class="toggle-label">Extra Bass</span>
+                            <button
+                                id="extraBassToggle"
+                                class="toggle-btn"
+                            ></button>
+                        </div>
+                        <div class="toggle-container">
+                            <span class="toggle-label">Enhancer</span>
+                            <button
+                                id="enhancerToggle"
+                                class="toggle-btn"
+                            ></button>
+                        </div>
+                    </div>
+
+                    <!-- Bass, Treble, Subwoofer -->
+                    <div class="tone-row">
+                        <div class="tone-col">
+                            <div class="tone-head">
+                                <label
+                                    id="bassLabel"
+                                    class="tone-label"
+                                    data-param="bass"
+                                    >Bass</label
+                                >
+                                <span id="bassValue" class="tone-value"
+                                    >0 dB</span
+                                >
+                            </div>
+                            <input
+                                id="bassSlider"
+                                type="range"
+                                class="tone-slider"
+                            />
+                        </div>
+                        <div class="tone-col">
+                            <div class="tone-head">
+                                <label
+                                    id="trebleLabel"
+                                    class="tone-label"
+                                    data-param="treble"
+                                    >Treble</label
+                                >
+                                <span id="trebleValue" class="tone-value"
+                                    >0 dB</span
+                                >
+                            </div>
+                            <input
+                                id="trebleSlider"
+                                type="range"
+                                class="tone-slider"
+                            />
+                        </div>
+                        <div class="tone-col">
+                            <div class="tone-head">
+                                <label
+                                    id="subwooferLabel"
+                                    class="tone-label"
+                                    data-param="subwoofer"
+                                    >Subwoofer</label
+                                >
+                                <span id="subValue" class="tone-value"
+                                    >0 dB</span
+                                >
+                            </div>
+                            <input
+                                id="subwooferSlider"
+                                type="range"
+                                class="tone-slider"
+                            />
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <input
+                id="ipInput"
+                class="footer-ip-input"
+                type="text"
+                placeholder="Enter IP address"
+                autocomplete="off"
+                spellcheck="false"
+            />
+            <span id="connectionStatus" class="connection-status"
+                >No connection</span
+            >
+        </footer>
+
+        <script type="module" src="popup.js"></script>
+    </body>
+</html>

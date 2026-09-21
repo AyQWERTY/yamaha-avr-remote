@@ -1,0 +1,14 @@
+{
+  "name": "yamaha-avr-remote",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "web-ext run --ignore-files=tmp --ignore-files=assets --ignore-files=AGENTS.md --ignore-files=package.json --ignore-files=package-lock.json --ignore-files=icons/generate-icons.mjs",
+    "lint": "web-ext lint --ignore-files=tmp --ignore-files=assets --ignore-files=AGENTS.md --ignore-files=package.json --ignore-files=package-lock.json --ignore-files=icons/generate-icons.mjs",
+    "build": "web-ext build --overwrite-dest --ignore-files=tmp --ignore-files=assets --ignore-files=AGENTS.md --ignore-files=package.json --ignore-files=package-lock.json --ignore-files=icons/generate-icons.mjs",
+    "icons": "node icons/generate-icons.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4",
+    "web-ext": "^8.0.0"
+  }
+}
