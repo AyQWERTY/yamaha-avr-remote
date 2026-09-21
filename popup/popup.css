@@ -1,0 +1,508 @@
+/* Yamaha Extension Popup — Subtle Tinted UI (Light) */
+
+:root {
+  /* Base — Yamaha purple, desaturated */
+  --hue: 265;
+  --sat: 45%;
+  --tint: hsl(var(--hue), var(--sat), 65%);
+  --tint-muted: hsla(var(--hue), var(--sat), 65%, 0.15);
+
+  /* Neutrals — light warm grey */
+  --bg: #f6f6f8;
+  --bg-card: hsla(var(--hue), 10%, 97%, 0.85);
+  --bg-card-hover: hsla(var(--hue), 10%, 98%, 0.95);
+  --text: #3a3a40;
+  --text-sec: #6e6e76;
+  --text-faint: #a2a2aa;
+  --border: hsl(var(--hue), 8%, 88%);
+  --border-focus: hsla(var(--hue), var(--sat), 55%, 0.5);
+
+  /* Status colors — muted */
+  --success: hsl(145, 40%, 42%);
+  --warn: hsl(35, 70%, 52%);
+  --err: hsl(0, 50%, 55%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  width: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ─────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--tint), transparent 80%);
+  opacity: 0.4;
+}
+
+.header h1 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+/* Power button in header */
+
+.btn-power-header {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: hsla(0, 50%, 55%, 0.12);
+  color: hsla(0, 50%, 55%, 0.75);
+}
+
+.btn-power-header:hover:not(:disabled) {
+  background: hsla(0, 50%, 55%, 0.2);
+}
+
+.btn-power-header:active {
+  transform: scale(0.95);
+}
+
+.btn-power-header.on {
+  background: hsla(145, 40%, 42%, 0.12);
+  color: hsla(145, 40%, 42%, 0.75);
+}
+
+.btn-power-header.on:hover {
+  background: hsla(145, 40%, 42%, 0.2);
+}
+
+.btn-power-header.off {
+  background: hsla(0, 50%, 55%, 0.12);
+  color: hsla(0, 50%, 55%, 0.75);
+}
+
+.btn-power-header.off:hover {
+  background: hsla(0, 50%, 55%, 0.2);
+}
+
+.btn-power-header.disconnected {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Main Content ───────────────────────────── */
+
+.main {
+  flex: 1;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: filter 0.3s;
+}
+
+.main.locked {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+/* ── Control Section (Grouped Card) ─────────── */
+
+.control-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.control-section:hover {
+  background: var(--bg-card-hover);
+}
+
+/* Tinted accent bar at top */
+.control-section::before {
+  content: '';
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  background: var(--tint-muted);
+}
+
+/* Group-specific tints */
+.control-section.group-basic::before {
+  background: hsla(220, 50%, 55%, 0.25);
+}
+
+.control-section.group-sound::before {
+  background: hsla(var(--hue), var(--sat), 60%, 0.25);
+}
+
+.control-section.group-tone::before {
+  background: hsla(30, 55%, 55%, 0.25);
+}
+
+.control-section h2 {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Row layouts ────────────────────────────── */
+
+.toggle-row {
+  display: flex;
+  gap: 16px;
+}
+
+.toggle-row > * {
+  flex: 1;
+}
+
+.sound-row {
+  display: flex;
+  gap: 10px;
+}
+
+.sound-row > * {
+  flex: 1;
+}
+
+.input-row {
+  margin-top: 12px;
+}
+
+.tone-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.tone-col {
+  width: 33.33%;
+}
+
+.tone-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+/* ── Toggle Buttons (Extra Bass / Enhancer) ── */
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.toggle-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.toggle-btn {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--border);
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle-btn.active {
+  background: var(--tint);
+}
+
+.toggle-btn::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+
+.toggle-btn.active::after {
+  transform: translateX(20px);
+}
+
+.toggle-btn:disabled {
+  background: var(--border);
+  cursor: not-allowed;
+}
+
+.toggle-btn:disabled::after {
+  background: var(--text-faint);
+}
+
+/* ── Volume Control ─────────────────────────── */
+
+.volume-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volume-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-mute {
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s;
+  color: var(--text-sec);
+  padding: 4px;
+  line-height: 1;
+}
+
+.btn-mute:hover:not(:disabled) {
+  color: var(--tint);
+}
+
+.btn-mute.muted {
+  color: hsla(0, 50%, 55%, 0.75);
+}
+
+.volume-display {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.volume-slider-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.slider-track-container {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  border-radius: 16px;
+  background: hsla(0, 0%, 0%, 0.04);
+}
+
+.slider-track-clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.slider-track-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(to right, var(--tint) 0%, hsl(var(--hue), var(--sat), 72%) 100%);
+}
+
+.volume-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Select / Input ─────────────────────────── */
+
+.input-select {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23a2a2aa' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.input-select:hover { border-color: var(--text-faint); }
+
+.input-select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--tint-muted);
+}
+
+/* ── Slider (Tone Controls) ─────────────────── */
+
+.tone-slider {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tone-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--tint);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+.tone-value {
+  min-width: 32px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tone-label {
+  transition: color 0.15s;
+  display: inline-block;
+  min-width: 48px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+}
+
+.tone-label:hover {
+  color: var(--err) !important;
+}
+
+/* ── Footer ─────────────────────────────────── */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+}
+
+.footer-ip-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-sec);
+  font-size: 11px;
+  font-family: inherit;
+  padding: 2px 0 4px;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 120px;
+  max-width: 160px;
+  flex: 0 1 auto;
+}
+
+.footer-ip-input:focus {
+  border-bottom-color: var(--border-focus);
+}
+
+.footer-ip-input::placeholder {
+  color: var(--text-faint);
+}
+
+.connection-status { color: var(--err); font-weight: 600; }
+.connection-status.connected { color: var(--success); font-weight: 600; }
+.connection-status.connecting { color: var(--warn); font-weight: 600; }
+.connection-status.error { color: var(--err); font-weight: 600; }
+
+
