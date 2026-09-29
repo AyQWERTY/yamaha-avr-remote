@@ -157,17 +157,17 @@ body {
 }
 
 .np-artist {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text);
+    font-size: 11px;
+    color: var(--text-sec);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .np-track {
-    font-size: 11px;
-    color: var(--text-sec);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
