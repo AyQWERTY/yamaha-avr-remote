@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Yamaha AVR Remote",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Control your Yamaha AV receiver from the browser",
   "icons": {
     "16": "icons/icon-16.png",
