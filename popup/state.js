@@ -12,6 +12,7 @@ const DEFAULTS = {
   rawVolume: null,
   maxVolume: null,
   input: null,
+  nowPlaying: null,
   volStep: null,
   volDbMin: null,
   volRangeMin: null,

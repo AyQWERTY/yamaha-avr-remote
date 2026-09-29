@@ -18,6 +18,11 @@ let failedPolls = 0;
 // still reports the value from before the change.
 const SETTLE_DELAY = 50;
 
+// Track switching (stream fetch, etc.) takes longer than a plain set
+// command, so post-playback-action refresh waits longer to read the
+// new state instead of the receiver's transient switch state.
+const PLAYBACK_SETTLE_DELAY = 1000;
+
 export function beginConnection() {
   connectionGen += 1;
   return connectionGen;
@@ -40,6 +45,7 @@ export function showControls() {
   headerBtn.disabled = true;
 
   initPowerButton();
+  initNowPlaying();
   initMuteToggle();
   initVolumeButtons();
   initInputSelect();
@@ -71,6 +77,9 @@ export async function initFromStatus(data, gen) {
   await updateStraightToggleState();
   await ensureModelName(gen);
 
+  await api.fetchPlayInfo();
+  updateNowPlayingUI(state.nowPlaying);
+
   startAutoRefresh();
 }
 
@@ -78,6 +87,7 @@ export async function initFromStatus(data, gen) {
 export function resetUI() {
   resetState();
   stopAutoRefresh();
+  hideNowPlaying();
   const headerBtn = document.getElementById("powerToggleHeader");
   headerBtn.className = "btn-power-header disconnected";
   headerBtn.title = "Disconnected — no receiver connection";
@@ -109,6 +119,8 @@ export async function refresh(delay = 0) {
   }
   failedPolls = 0;
   applyStatusToUI(api.getLastStatusData());
+  await api.fetchPlayInfo();
+  updateNowPlayingUI(state.nowPlaying);
   return true;
 }
 
@@ -164,6 +176,104 @@ async function ensureModelName(gen) {
   } catch (err) {
     console.warn("[ensureModelName]", err.message);
   }
+}
+
+// ── Now Playing ───────────────────────────────
+
+let _npArtId = null;
+let _npArtUrl = null;
+
+function hideNowPlaying() {
+  document.getElementById("nowPlaying").hidden = true;
+  document.querySelector(".header").classList.remove("has-playback");
+  if (_npArtUrl) URL.revokeObjectURL(_npArtUrl);
+  _npArtUrl = null;
+  _npArtId = null;
+}
+
+/**
+ * Push the latest net/USB getPlayInfo data into the header.
+ * np is null or a track with non-empty artist/track — fetchPlayInfo
+ * never stores an empty one. Transport buttons follow the `attribute`
+ * capability bitmask (Yamaha spec §7.2): b[2] pause, b[3] previous
+ * skip, b[4] next skip.
+ */
+function updateNowPlayingUI(np) {
+  if (!np) {
+    hideNowPlaying();
+    return;
+  }
+
+  document.querySelector(".header").classList.add("has-playback");
+  document.getElementById("nowPlaying").hidden = false;
+
+  const artistEl = document.getElementById("npArtist");
+  const trackEl = document.getElementById("npTrack");
+  artistEl.textContent = artistEl.title = np.artist || "";
+  trackEl.textContent = trackEl.title = np.track || "";
+
+  // Refetch the cover only when the receiver reports a new albumart_id.
+  if (_npArtId !== np.albumart_id) {
+    _npArtId = np.albumart_id;
+    loadAlbumArt(np.albumart_url, np.albumart_id);
+  }
+
+  const attr = np.attribute || 0;
+  document.getElementById("npPrev").hidden = !(attr & 8);
+  document.getElementById("npPlayPause").hidden = !(attr & 4);
+  document.getElementById("npNext").hidden = !(attr & 16);
+
+  const playing =
+    np.playback === "play" ||
+    np.playback === "fast_forward" ||
+    np.playback === "fast_reverse";
+  document.getElementById("npIconPause").style.display = playing ? "" : "none";
+  document.getElementById("npIconPlay").style.display = playing ? "none" : "";
+}
+
+async function loadAlbumArt(path, artId) {
+  const art = document.getElementById("npArt");
+  if (!path) {
+    art.hidden = true;
+    return;
+  }
+  art.hidden = false;
+  try {
+    const response = await sendMessage({ action: "getNetUsbAlbumArt", path });
+    if (artId !== _npArtId) return; // superseded by a newer cover
+    if (_npArtUrl) URL.revokeObjectURL(_npArtUrl);
+    _npArtUrl = URL.createObjectURL(response.data);
+    art.src = _npArtUrl;
+  } catch (err) {
+    console.warn("[albumArt]", err.message);
+    if (artId === _npArtId) art.hidden = true;
+  }
+}
+
+async function sendNetUsbPlayback(playback) {
+  try {
+    await sendMessage({ action: "setNetUsbPlayback", playback });
+    await refresh(PLAYBACK_SETTLE_DELAY);
+  } catch (err) {
+    console.warn("[playback]", err.message);
+  }
+}
+
+function initNowPlaying() {
+  document
+    .getElementById("npPrev")
+    .addEventListener("click", () => sendNetUsbPlayback("previous"));
+  document
+    .getElementById("npPlayPause")
+    .addEventListener("click", () => sendNetUsbPlayback("play_pause"));
+  document
+    .getElementById("npNext")
+    .addEventListener("click", () => sendNetUsbPlayback("next"));
+  // The receiver can report a cover that fails to load (missing file,
+  // encrypted .ymf art) — drop the image instead of a broken placeholder.
+  document.getElementById("npArt").addEventListener("error", (e) => {
+    e.target.hidden = true;
+  });
 }
 
 // ── Power ──────────────────────────────────────

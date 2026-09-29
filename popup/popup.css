@@ -45,6 +45,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     padding: 14px 16px;
     background: var(--bg-card);
     border-bottom: 1px solid var(--border);
@@ -115,6 +116,89 @@ body {
 .btn-power-header.disconnected {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Hide the device name while now playing is shown. */
+.header.has-playback h1 {
+    display: none;
+}
+
+/* Now playing — net/USB sources only; hidden otherwise. */
+
+.now-playing {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+}
+
+.now-playing[hidden],
+.np-btn[hidden] {
+    display: none;
+}
+
+.np-art {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+}
+
+.np-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    line-height: 1.4;
+}
+
+.np-artist {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-track {
+    font-size: 11px;
+    color: var(--text-sec);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.np-btn {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--tint-muted);
+    color: var(--tint);
+    transition: all 0.2s;
+}
+
+.np-btn:hover {
+    background: hsla(var(--hue), var(--sat), 65%, 0.28);
+}
+
+.np-btn:active {
+    transform: scale(0.95);
+}
+
+.np-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
 }
 
 /* ── Main Content ───────────────────────────── */

@@ -9,6 +9,58 @@
     <body>
         <header class="header">
             <h1 id="receiverName">Yamaha AVR Remote</h1>
+            <div id="nowPlaying" class="now-playing" hidden>
+                <img id="npArt" class="np-art" alt="" />
+                <div class="np-text">
+                    <span id="npArtist" class="np-artist"></span>
+                    <span id="npTrack" class="np-track"></span>
+                </div>
+                <button
+                    id="npPrev"
+                    class="np-btn"
+                    type="button"
+                    title="Previous"
+                    hidden
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 6h2v12H6zM19 6v12L9 12z" />
+                    </svg>
+                </button>
+                <button
+                    id="npPlayPause"
+                    class="np-btn"
+                    type="button"
+                    title="Play / Pause"
+                    hidden
+                >
+                    <svg
+                        id="npIconPause"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="M7 5h4v14H7zM13 5h4v14h-4z" />
+                    </svg>
+                    <svg
+                        id="npIconPlay"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        style="display: none"
+                    >
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </button>
+                <button
+                    id="npNext"
+                    class="np-btn"
+                    type="button"
+                    title="Next"
+                    hidden
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M16 6h2v12h-2zM5 6l10 6-10 6z" />
+                    </svg>
+                </button>
+            </div>
             <button
                 id="powerToggleHeader"
                 class="btn-power-header"

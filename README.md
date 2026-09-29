@@ -16,12 +16,18 @@ A Firefox extension that turns the browser into a remote for your Yamaha AV rece
 - Bass, treble and subwoofer tone controls
 - Extra Bass and Enhancer toggles
 - Live status — the popup auto-refreshes the receiver's state
+- Now playing in the header for net/USB sources (Spotify, USB, net
+  services): artist, track, album art and transport controls
 
 The extension talks directly to the receiver's built-in HTTP API
 (YamahaExtendedControl) on port 80. Inputs, sound programs and
 volume/tone ranges are read from the receiver itself, so it adapts to any
 supported Yamaha model. No data is collected or sent anywhere except the
 local receiver.
+
+Now playing display and transport controls are limited to net/USB inputs
+(`play_info_type: netusb` in `getFeatures`). CD and tuner now-playing
+information is intentionally not supported.
 
 ![Popup screenshot](assets/popup.png)
 

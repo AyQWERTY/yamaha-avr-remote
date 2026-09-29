@@ -207,6 +207,61 @@ function setMute(enable) {
 }
 
 /**
+ * Get net/USB playback info (artist, track, album art, playback state).
+ * @returns {Promise<Object>} getPlayInfo response.
+ */
+function getNetUsbPlayInfo() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 2000);
+
+  return getYamahaIp()
+    .then((ip) => {
+      const url = buildUrl(ip, "/YamahaExtendedControl/v1/netusb/getPlayInfo");
+      return fetch(url, { method: "GET", signal: controller.signal }).then(
+        (response) => {
+          if (!response.ok) throw new Error("HTTP " + response.status);
+          return response.json();
+        },
+      );
+    })
+    .catch((err) => {
+      clearTimeout(timeout);
+      if (err.name === "AbortError") throw new Error("Request timed out");
+      throw err;
+    });
+}
+
+/**
+ * Download net/USB album art.
+ * Fetched in the worker because the browser rewrites direct <img src>
+ * image URLs from http to https, while the receiver only serves http.
+ * @param {string} path - relative album art path from getPlayInfo
+ * @returns {Promise<Blob>} the art image
+ */
+function getNetUsbAlbumArt(path) {
+  return getYamahaIp().then((ip) => {
+    const url = buildUrl(ip, path);
+    return fetch(url).then((response) => {
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      return response.blob();
+    });
+  });
+}
+
+/**
+ * Set net/USB playback state.
+ * @param {string} playback - 'play_pause' / 'previous' / 'next'
+ */
+function setNetUsbPlayback(playback) {
+  if (!["play_pause", "previous", "next"].includes(playback)) {
+    return Promise.reject(new Error("Invalid playback command."));
+  }
+  return fetchYamahaApi(
+    `/YamahaExtendedControl/v1/netusb/setPlayback?playback=${playback}`,
+  );
+}
+
+/**
  * Get main status (power, volume, input) from the receiver.
  * @returns {Promise<Object>} Main status object.
  */
@@ -285,6 +340,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
     case "setMute":
       result = setMute(message.enable);
+      break;
+    case "getNetUsbPlayInfo":
+      result = getNetUsbPlayInfo();
+      break;
+    case "getNetUsbAlbumArt":
+      result = getNetUsbAlbumArt(message.path);
+      break;
+    case "setNetUsbPlayback":
+      result = setNetUsbPlayback(message.playback);
       break;
     default:
       sendResponse({ error: `Unknown action: ${message.action}` });

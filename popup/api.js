@@ -9,6 +9,14 @@ import {
 let _lastStatusData = null;
 let _featuresPromise = null;
 let _featuresVersion = 0;
+// input id -> play_info_type, from getFeatures ("netusb"/"tuner"/"cd"/"none").
+let _inputPlayInfo = {};
+
+function applyInputPlayInfo(list) {
+  _inputPlayInfo = Object.fromEntries(
+    (list || []).map((i) => [i.id, i.play_info_type]),
+  );
+}
 
 export function getLastStatusData() {
   return _lastStatusData;
@@ -52,6 +60,35 @@ export function applyStatusData(data) {
   }
   if (data.subwoofer_volume !== undefined) {
     state.subwoofer = data.subwoofer_volume;
+  }
+}
+
+/**
+ * Fetch net/USB playback info into state.nowPlaying.
+ * Only netusb play info is supported: with power off or a non-netusb input
+ * the state is cleared instead of requesting. A failed poll keeps the
+ * previous value so a single bad response does not flicker the header.
+ */
+export async function fetchPlayInfo() {
+  if (!state.connected || state.power !== "ON") {
+    state.nowPlaying = null;
+    return;
+  }
+  if (_inputPlayInfo[state.input] !== "netusb") {
+    state.nowPlaying = null;
+    return;
+  }
+  try {
+    const response = await sendMessage({ action: "getNetUsbPlayInfo" });
+    const data = response?.data;
+    if (data?.response_code === 0) {
+      // Empty artist+track is the receiver's transient state while a
+      // track is switching; keep the previous track so the header
+      // does not flicker away between polls.
+      if (data.artist || data.track) state.nowPlaying = data;
+    }
+  } catch (err) {
+    console.warn("[fetchPlayInfo]", err.message);
   }
 }
 
@@ -113,25 +150,33 @@ export function ensureFeatures() {
         version === _featuresVersion &&
         cached &&
         cached.timestamp &&
+        cached.inputPlayInfo !== undefined &&
         Date.now() - cached.timestamp < FEATURES_CACHE_TTL
       ) {
         applyRanges(cached.rangeStep);
+        applyInputPlayInfo(cached.inputPlayInfo);
         return cached;
       }
 
       const response = await sendMessage({ action: "getFeatures" });
       const data = response?.data || {};
       const zone = data.zone?.find((z) => z.id === "main") || {};
+      const inputPlayInfo = (data.system?.input_list || []).map((i) => ({
+        id: i.id,
+        play_info_type: i.play_info_type,
+      }));
       const features = {
         timestamp: Date.now(),
         rangeStep: zone.range_step || [],
         inputList: zone.input_list || [],
         soundProgramList: zone.sound_program_list || [],
+        inputPlayInfo,
       };
       if (version === _featuresVersion) {
         await saveFeaturesCache(features);
       }
       applyRanges(features.rangeStep);
+      applyInputPlayInfo(inputPlayInfo);
       return features;
     })().finally(() => {
       _featuresPromise = null;
