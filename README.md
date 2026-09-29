@@ -29,7 +29,12 @@ Now playing display and transport controls are limited to net/USB inputs
 (`play_info_type: netusb` in `getFeatures`). CD and tuner now-playing
 information is intentionally not supported.
 
-![Popup screenshot](assets/popup.png)
+<div style="display: flex; gap: 8px">
+  <img src="assets/popup.png" alt="Popup screenshot"
+    style="flex: 1 1 auto; min-width: 0; height: auto">
+  <img src="assets/nowPlaying.png" alt="Now playing in the header"
+    style="flex: 1 1 auto; min-width: 0; height: auto">
+</div>
 
 ## Usage
 
